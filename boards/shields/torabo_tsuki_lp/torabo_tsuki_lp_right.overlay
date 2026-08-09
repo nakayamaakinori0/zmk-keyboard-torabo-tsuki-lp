@@ -1,9 +1,24 @@
 #include "torabo_tsuki_lp.dtsi"
 #include <input/processors.dtsi>
 #include <dt-bindings/zmk/input_transform.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+/ {
+    zip_hwheel_kill: zip_hwheel_kill {
+        compatible = "zmk,input-processor-scaler";
+        #input-processor-cells = <2>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_HWHEEL>;
+    };
+};
 
 &pointing_listener {
     input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>;
+
+    scroller {
+        layers = <3>;
+        input-processors = <&zip_xy_to_scroll_mapper>, <&zip_hwheel_kill 1 16>, <&zip_scroll_scaler 1 12>;
+    };
 };
 
 &size_s_transform {
